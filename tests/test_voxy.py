@@ -51,9 +51,9 @@ def test_character_counter(client, sentence, word_count, status_code):
 
 
 @pytest.mark.parametrize("filename, word_count", [
-    ('file1.txt', 14),
-    ('file2.txt', 231),
-    ('file3.txt', 2377),
+    ('tests/file1.txt', 14),
+    ('tests/file2.txt', 231),
+    ('tests/file3.txt', 2377),
 ])
 def test_upload_file(client, filename, word_count):
     file = os.path.join(filename)

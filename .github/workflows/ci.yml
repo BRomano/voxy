@@ -41,7 +41,7 @@ jobs:
         flake8 voxy --count --exit-zero --max-complexity=10 --statistics
 
     - name: Tests
-      working-directory: ./tests
+      working-directory: ./
       run: |
         coverage run -m pytest
 
