@@ -9,9 +9,9 @@
 > To run the test, just git pull && docker-compose up
 
 ## Some decision on implementations
-1. For package manager I choose to use pipenv, it is integrated on Docker build, and on a small CI process;
+1. For package manager I choose to use [pipenv](https://github.com/BRomano/voxy/blob/main/voxy/Pipfile), it is [integrated on Docker build](https://github.com/BRomano/voxy/blob/main/voxy/Dockerfile), and on a small [CI process](https://github.com/BRomano/voxy/blob/main/.github/workflows/ci.yml);
 2. Also I choose to create two applications, one for frontend using vue.js and another for backend in Python/Flask;
-3. For Backend I am using OpenAPI 3.0 (Swagger) to document every [endpoint](http://159.223.180.98/api/apidocs/);
+3. For Backend I am using [OpenAPI 3.0 (Swagger)](https://swagger.io/) to document every [endpoint](http://159.223.180.98/api/apidocs/);
 4. Algo for helping to run the project I am putting the project inside a [docker-compose](https://github.com/BRomano/voxy/blob/main/docker-compose.yml)
    1. So I created 2 inner projects one for frontend with vue.js, tailwind and nginx for reverse proxy.
    2. For backend the container will be created based on voxy/Dockerfile, and run inside a gunicorn, it will run 4 instances, it is all configured on docker-compose yml;
