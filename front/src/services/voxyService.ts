@@ -10,7 +10,7 @@ class VoxyService {
   countWordsFile(file: any) {
     const formData = new FormData();
     formData.append('file', file);
-    return http.post('/api/wordcounting/upload', formData, {
+    return http.post('/api/wordcounting/wordCountFile', formData, {
       headers: {
         'Content-Type': 'multipart/forma-data',
       },

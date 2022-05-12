@@ -13,6 +13,10 @@ def _count_word(sentence: str) -> int:
     :param sentence: Sentence
     :return: how many words sentence has
     """
+    if len(sentence) == 0:
+        raise Exception('Text must have at least one word')
+
+    sentence = sentence.replace('\n', ' ')
     words = sentence.split(' ')
     words = [word for word in words if word not in punctuation and word not in EXTRA_VALUES]
     return len(words)
@@ -25,6 +29,8 @@ def _count_characters(sentence: str) -> [dict]:
     :param sentence: Sentence
     :return: a dict ascii_lowercase with how many characters this string has
     """
+    if len(sentence) == 0:
+        raise Exception('Text must have at least one word')
 
     characters = {c.lower(): 0 for c in ascii_lowercase}
     for c in sentence:
@@ -33,6 +39,15 @@ def _count_characters(sentence: str) -> [dict]:
 
     characters = [{'character': c, 'count': characters[c]} for c in characters]
     return characters
+
+
+def do_word_count(sentence: str) -> [int, dict]:
+    size = _count_word(sentence)
+    if size == 0:
+        raise Exception('Text must have at least one word')
+
+    characters = _count_characters(sentence)
+    return size, characters
 
 
 @bp.route('/wordCount', methods=['POST'])
@@ -104,8 +119,58 @@ def get_words_count():
 
     try:
         sentence = request.json.get('sentence')
-        size = _count_word(sentence)
-        characters = _count_characters(sentence)
+        size, characters = do_word_count(sentence)
+
+        return jsonify({
+            'count': size,
+            'characters': characters
+        }), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 400
+
+
+@bp.route('/wordCountFile', methods=['POST'])
+def get_words_count_file():
+    """
+    Upload a txt file
+    ---
+    description: Will handle a txt file.
+    parameters:
+      - name: file
+        in: formData
+        type: file
+        required: true
+        description: The file to be imported
+    responses:
+      200:
+        description: The object retrieved from thrid party API, or getted from cache. If Attribute cached_data is false, the object was cached
+        schema:
+          $ref: '#definitions/ResponseWordCounter'
+
+      400:
+        description: if any error occur on endpoint
+        schema:
+          $ref: '#definitions/ErrorMessage'
+    """
+
+    try:
+        if len(request.files) != 1 or 'file' not in request.files:
+            message = 'There is no files on request content'
+            if 'file' not in request.files:
+                message = 'Wrong post request'
+            raise Exception(message)
+
+        file = request.files['file']
+        if file.content_type != 'text/plain':
+            raise Exception('Incorrect content type, file must be txt')
+
+        contents = file.read()
+        try:
+            contents = contents.decode('utf-8')
+        except UnicodeError:
+            contents = contents.decode('utf-16')
+
+        size, characters = do_word_count(contents)
         return jsonify({
             'count': size,
             'characters': characters

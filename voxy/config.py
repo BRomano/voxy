@@ -50,3 +50,4 @@ class DevConfig(BaseConfig):
 
     # CORS
     CORS_SUPPORTS_ORIGIN = os.getenv('CORS_SUPPORTS_ORIGIN', '*')
+    MAX_CONTENT_LENGTH = 1024 * 1024 * 2

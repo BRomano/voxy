@@ -3,7 +3,13 @@ export interface Char {
   count: number;
 };
 
-export interface WordCountResponse {
+export class WordCountResponse {
   count: number;
+
   characters: Array<Char>;
+
+  constructor() {
+    this.count = 0;
+    this.characters = [];
+  }
 }

@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  backend:
+    build: voxy
+    command: gunicorn --workers 4 --bind 0.0.0.0:5000 "voxy:create_app('DevConfig')" --max-requests 10000 --timeout 5 --keep-alive 5 --log-level info
+    restart: always
+    ports:
+      - 5000
+    environment:
+      - APP_NAME="VoxyApp"
+      - DEBUG=False
+      - APP_LONG_NAME="Voxy Test"
+      - SECRET_KEY=brunoromano
+  proxy:
+    build: front
+    restart: always
+    ports:
+      - 8080:80
+    depends_on:
+      - backend
