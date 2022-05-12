@@ -50,40 +50,46 @@ def test_character_counter(client, sentence, word_count, status_code):
         assert 'message' in json_data
 
 
-@pytest.mark.parametrize("filename, word_count", [
-    ('tests/file1.txt', 14),
-    ('tests/file2.txt', 231),
-    ('tests/file3.txt', 2377),
+@pytest.mark.parametrize("filename, word_count, status_code", [
+    ('tests/file1.txt', 14, 200),
+    ('tests/file2.txt', 231, 200),
+    ('tests/file3.txt', 2377, 200),
+    ('', 0, 400),
 ])
-def test_upload_file(client, filename, word_count):
+def test_upload_file(client, filename, word_count, status_code):
     file = os.path.join(filename)
+    data = {
+        'file': FileStorage(
+            stream=open(file, "rb"),
+            filename=filename,
+            content_type="text/plain",
+        )
+    } if len(filename) else {}
+
     res = client.post(f'/api/wordcounting/wordCountFile',
-                      data={ 'file': FileStorage(
-        stream=open(file, "rb"),
-        filename=filename,
-        content_type="text/plain",
-    )}, content_type="multipart/form-data")
+                      data=data, content_type="multipart/form-data")
 
-    my_file = FileStorage(
-        stream=open(file, "rb"),
-        filename=filename,
-        content_type="text/plain",
-    )
-    sentence = my_file.read()
-    try:
-        sentence = sentence.decode('utf-8')
-    except UnicodeError:
-        sentence = sentence.decode('utf-16')
-
-    assert res.status_code == 200
     json_data = res.get_json()
+    assert res.status_code == status_code
+    if status_code == 200:
+        my_file = FileStorage(
+            stream=open(file, "rb"),
+            filename=filename,
+            content_type="text/plain",
+        )
+        sentence = my_file.read()
+        try:
+            sentence = sentence.decode('utf-8')
+        except UnicodeError:
+            sentence = sentence.decode('utf-16')
+        characters = {c.lower(): 0 for c in sentence if c in ascii_lowercase}
+        for c in sentence:
+            if c in ascii_lowercase:
+                characters[c.lower()] += 1
 
-    characters = {c.lower(): 0 for c in sentence if c in ascii_lowercase}
-    for c in sentence:
-        if c in ascii_lowercase:
-            characters[c.lower()] += 1
-
-    assert json_data.get('count') == word_count
-    for _char_obj in json_data.get('characters'):
-        if _char_obj.get('count') > 0:
-            assert int(_char_obj.get('count')) == characters[_char_obj.get('character')]
+        assert json_data.get('count') == word_count
+        for _char_obj in json_data.get('characters'):
+            if _char_obj.get('count') > 0:
+                assert int(_char_obj.get('count')) == characters[_char_obj.get('character')]
+    else:
+        assert 'message' in json_data
