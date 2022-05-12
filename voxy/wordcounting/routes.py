@@ -132,9 +132,9 @@ def get_words_count():
 @bp.route('/wordCountFile', methods=['POST'])
 def get_words_count_file():
     """
-    Upload a txt file
+    Upload a txt file to count how many words it has
     ---
-    description: Will handle a txt file.
+    description: Will count how many words the txt file has.
     parameters:
       - name: file
         in: formData
