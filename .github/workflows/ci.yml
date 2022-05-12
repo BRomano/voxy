@@ -1,0 +1,67 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8.5"]
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      working-directory: ./voxy
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install pipenv
+        pipenv install --dev --system
+
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 voxy --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings.
+        flake8 voxy --count --exit-zero --max-complexity=10 --statistics
+
+    - name: Tests
+      run: |
+        coverage run -m pytest
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        env_vars: OS,PYTHON
+        fail_ci_if_error: true
+        flags: unittests
+        verbose: true
+
+    - name: Bump version and push tag
+      id: tag_version
+      uses: mathieudutour/github-tag-action@v6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create a GitHub release
+      uses: ncipollo/release-action@v1
+      with:
+        tag: ${{ steps.tag_version.outputs.new_tag }}
+        name: Release ${{ steps.tag_version.outputs.new_tag }}
+        body: ${{ steps.tag_version.outputs.changelog }}

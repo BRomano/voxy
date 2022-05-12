@@ -1,4 +1,4 @@
-from flask import request, jsonify, current_app as app
+from flask import request, jsonify
 from voxy.wordcounting import wordcounting_bp as bp
 
 from string import ascii_lowercase, punctuation

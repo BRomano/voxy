@@ -42,6 +42,7 @@
         <h2 class="text-2xl"> Word Analytical </h2>
         <div class="w-full"> Total words: {{ countResponse.count }}</div>
 
+        <h2 class="text-2xl mt-2"> Total Characters </h2>
         <div class="w-full grid grid-cols-6 gap-4">
           <div v-for="item in countResponse.characters" :key="item.character" class="rounded-lg border-solid border p-2"
                :class="{'bg-green-400': item.count > 0}">
@@ -60,7 +61,7 @@ import { WordCountResponse } from '@/types/Char';
 
 @Component
 export default class WordCounter extends Vue {
-  private uploadFile: null | File = null;
+  private uploadFile: File | null;
 
   private sentence: string;
 
@@ -70,6 +71,8 @@ export default class WordCounter extends Vue {
 
   constructor() {
     super();
+
+    this.uploadFile = null;
     this.sentence = '';
     this.error = '';
     this.countResponse = new WordCountResponse();
@@ -80,9 +83,11 @@ export default class WordCounter extends Vue {
 
     // eslint-disable-next-line prefer-destructuring
     this.uploadFile = files[0];
-    this.uploadFile.text().then((txt) => {
-      this.sentence = txt.substring(0, 200).concat('...');
-    });
+    if (this.uploadFile) {
+      this.uploadFile.text().then((txt: string) => {
+        this.sentence = txt.substring(0, 200).concat('...');
+      });
+    }
     e.currentTarget.value = '';
   }
 
@@ -108,7 +113,6 @@ export default class WordCounter extends Vue {
     promise.then(() => {
       this.error = '';
     }).catch((err) => {
-      console.log(err);
       this.error = err.response.data.message;
       return false;
     });

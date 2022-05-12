@@ -11,7 +11,7 @@ RUN addgroup -S app && adduser -S -G app app
 
 WORKDIR $HOME
 COPY Pipfile Pipfile.lock ./
-COPY voxy ./voxy
+COPY . ./voxy
 
 # To make layers and help and make process agile, for production docker image should be '&&'
 RUN chown -R app:app $HOME
