@@ -1,5 +1,7 @@
 # Voxy
 
+[![ci](https://github.com/BRomano/voxy/actions/workflows/ci.yml/badge.svg)](https://github.com/BRomano/voxy/actions/workflows/ci.yml)
+
 ## 
 
 As the test said we can just go on...
