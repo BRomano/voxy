@@ -29,7 +29,7 @@ def create_app(config_class='DevConfig'):
         }
     ]
 
-    swagger_config["static_url_path"] = "/flasgger_static"
+    swagger_config["static_url_path"] = "/api/flasgger_static"
     swagger_config["swagger_ui"] = True
     swagger_config["specs_route"] = "/api/apidocs/"
     swag = Swagger(app, config=swagger_config)  # noqa: F841
