@@ -1,11 +1,11 @@
 <template>
   <div class="w-4/5 flex flex-col items-center">
     <h1 class="text-3xl underline m-2">
-      <a href="https://github.com/BRomano/voxy" target="_blank">Voxy TESTE Leia REAMDE.md</a>
+      <a href="https://github.com/BRomano/voxy" target="_blank">Voxy test read REAMDE.md</a>
     </h1>
 
     <h2 class="text-2xl underline">
-      <a href="/api/apidocs/" target="_blank">Documentação dos ENDPOINTS</a>
+      <a href="/api/apidocs/" target="_blank">Endpoint Documentation OPENAPI</a>
     </h2>
 
     <div class="w-1/2 flex flex-col items-center m-2">
